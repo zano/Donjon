@@ -26,33 +26,35 @@ namespace Donjon
 
         internal void Populate()
         {
-            var cell = cells[4, 7];
-            cell.Monster = new Monster();
+            cells[4, 7].Monster = new Orc();
+            cells[7, 4].Monster = new Goblin();
         }
 
         internal void Print(Hero hero)
         {
             for (int y = 0; y < height; y++)
-            {
-                var row = "";
+            {               
                 for (int x = 0; x < width; x++)
                 {
-                    // spacer
-                    row += " ";
-
+                    IDrawable d;
                     if (x == hero.X && y == hero.Y)
                     {
                         // vi har en hjälte här
-                        row += hero.Symbol;
+                        d = hero;
                     }
                     else
                     {
                         // bara en cell
-                        row += cells[x, y].Symbol;
+                        d = cells[x, y];                       
                     }
+                    Console.ForegroundColor = d.Color;
+                    Console.Write(" " + d.Symbol);
+                    Console.ResetColor();
                 }
-                Console.WriteLine(row);
+                Console.WriteLine();
             }
         }
+
+        internal Cell Cell(int x, int y) => cells[x, y];
     }
 }

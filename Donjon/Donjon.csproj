@@ -44,8 +44,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cell.cs" />
+    <Compile Include="Creature.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="GameObject.cs" />
     <Compile Include="Hero.cs" />
+    <Compile Include="IDrawable.cs" />
+    <Compile Include="Item.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Monster.cs" />
     <Compile Include="Program.cs" />
@@ -53,6 +57,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
