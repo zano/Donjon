@@ -8,6 +8,12 @@ namespace Donjon
             : base(name, symbol, color, health, damage)
         {
         }
+
+        public override void RemoveFrom(Cell cell)
+        {
+            cell.Monster = null;
+        }
+
     }
 
     class Orc : Monster

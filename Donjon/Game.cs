@@ -10,7 +10,7 @@ namespace Donjon
 
         private Map map;
         private Hero hero;
-
+        private string updateMessage = "";
 
         public Game(int width, int height)
         {
@@ -36,7 +36,7 @@ namespace Donjon
 
             // gör en första utskrift
             Draw();
-          
+
             while (!quit)
             {
                 // uppdatera
@@ -44,13 +44,22 @@ namespace Donjon
                 UserInput();
 
                 //  updatera spelobjekt
-
+                Update();
 
                 // rita spelplan och övrig information
                 Draw();
 
-                // avsluta slingan
-                //quit = true;
+            }
+        }
+
+        private void Update()
+        {
+            Cell cell = map.Cell(hero.X, hero.Y);
+            GameObject obj = (GameObject)cell.Monster ?? cell.Item;
+            if (obj != null) {
+                updateMessage = hero.Action(obj);
+                if (obj is Monster && (obj as Monster).Health > 0) updateMessage += obj.Action(hero);
+                if (obj.RemoveFromCell) obj.RemoveFrom(cell);
             }
         }
 
@@ -61,16 +70,20 @@ namespace Donjon
             Console.WriteLine("Hero's health: " + hero.Health);
             Console.WriteLine("Hero's damage: " + hero.Damage);
             Cell currentCell = map.Cell(hero.X, hero.Y);
-            var m = currentCell.Monster;
-            var s = "";
-            if (m != null)
-            {
-                Console.WriteLine($"You see a {m.Name} ({m.Health} hp)");
+
+            GameObject content = (GameObject)currentCell.Monster ?? currentCell.Item;
+            string message = "";
+
+            if (content != null) {
+                message = $"You see a {content.Name}";
+                if (content is Creature) {
+                    message += $" ({ (content as Creature).Health } hp)";
+                }
             }
-            else
-            {               
-                Console.WriteLine(new string(' ', Console.WindowWidth));
-            }
+            Console.WriteLine(message.PadRight(Console.WindowWidth));
+            Console.WriteLine(updateMessage.PadRight(Console.WindowWidth));
+            updateMessage = "";
+          
         }
 
         private void UserInput()

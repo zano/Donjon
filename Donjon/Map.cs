@@ -28,6 +28,11 @@ namespace Donjon
         {
             cells[4, 7].Monster = new Orc();
             cells[7, 4].Monster = new Goblin();
+
+            cells[5, 9].Item = new Coin();
+            cells[9, 5].Item = new Sock();
+            cells[9, 9].Item = new Sword();
+
         }
 
         internal void Print(Hero hero)
@@ -36,17 +41,9 @@ namespace Donjon
             {               
                 for (int x = 0; x < width; x++)
                 {
-                    IDrawable d;
-                    if (x == hero.X && y == hero.Y)
-                    {
-                        // vi har en hjälte här
-                        d = hero;
-                    }
-                    else
-                    {
-                        // bara en cell
-                        d = cells[x, y];                       
-                    }
+                    IDrawable d = cells[x, y];
+                    if (x == hero.X && y == hero.Y) d = hero;
+                    
                     Console.ForegroundColor = d.Color;
                     Console.Write(" " + d.Symbol);
                     Console.ResetColor();

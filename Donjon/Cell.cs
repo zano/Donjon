@@ -5,22 +5,19 @@ namespace Donjon
     internal class Cell : IDrawable
     {
         public Monster Monster { get; set; }
+        public Item Item { get; set; }
 
-        public ConsoleColor Color {
-            get {
-                return Monster?.Color ?? ConsoleColor.DarkGray;
+        public ConsoleColor Color
+        {
+            get
+            {
+                return Monster?.Color ?? Item?.Color ?? ConsoleColor.DarkGray;
             }
             set { }
         }
 
 
-        public string Symbol
-        {
-            get
-            {
-                if (Monster == null) return ".";
-                return Monster.Symbol;
-            }
-        }
+        public string Symbol => Monster?.Symbol ?? Item?.Symbol ?? ".";               
+
     }
 }
