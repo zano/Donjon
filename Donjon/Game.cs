@@ -106,6 +106,9 @@ namespace Donjon
                 case ConsoleKey.Q:
                     quit = true;
                     break;
+                case ConsoleKey.I:
+                    updateMessage += hero.Inventory();
+                    break;
             }
         }
     }

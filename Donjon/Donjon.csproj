@@ -50,6 +50,7 @@
     <Compile Include="Hero.cs" />
     <Compile Include="IDrawable.cs" />
     <Compile Include="Item.cs" />
+    <Compile Include="LimitedList.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Monster.cs" />
     <Compile Include="Program.cs" />
