@@ -1,23 +1,20 @@
 ﻿using System;
+using Donjon.Entities;
 
 namespace Donjon
 {
-    internal abstract class GameObject : IDrawable
+    internal abstract class Entity : IDrawable
     {
         public string Name { get; set; }
         public string Symbol { get; protected set; }
         public ConsoleColor Color { get; set; }
         public bool RemoveFromCell = false;
 
-        public GameObject(string name, string symbol, ConsoleColor color)
+        public Entity(string name, string symbol, ConsoleColor color)
         {
             Name = name;
             Symbol = symbol;
             Color = color;
         }
-
-        public abstract string Action(GameObject obj);
-
-        public abstract void RemoveFrom(Cell cell);
     }
 }

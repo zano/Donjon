@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Donjon
+namespace Donjon.Entities
 {
     internal interface IDrawable
     {

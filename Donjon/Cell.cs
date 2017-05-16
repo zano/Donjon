@@ -1,23 +1,19 @@
 ﻿using System;
+using Donjon.Entities;
 
-namespace Donjon
-{
-    internal class Cell : IDrawable
-    {
+namespace Donjon {
+    internal class Cell : IDrawable {
         public Monster Monster { get; set; }
         public Item Item { get; set; }
 
-        public ConsoleColor Color
-        {
-            get
-            {
-                return Monster?.Color ?? Item?.Color ?? ConsoleColor.DarkGray;
-            }
+        public ConsoleColor Color {
+            get { return Monster?.Color ?? Item?.Color ?? ConsoleColor.DarkGray; }
             set { }
         }
 
 
-        public string Symbol => Monster?.Symbol ?? Item?.Symbol ?? ".";               
+        public string Symbol => Monster?.Symbol ?? Item?.Symbol ?? ".";
 
+        public bool IsWall => false;
     }
 }
