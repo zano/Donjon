@@ -20,6 +20,11 @@ namespace Lib {
                 ? noun.ToQuantity(count)
                 : noun.ToQuantity(count, ShowQuantityAs.Words);
 
+        /// <summary>
+        /// Naive implementation of indefinited article selection
+        /// </summary>
+        /// <param name="noun"></param>
+        /// <returns></returns>
         public static string A(this string noun) {
             var article = Regex.IsMatch(noun, @"^[aeiou]", RegexOptions.IgnoreCase) ? "an" : "a";
             return article + " " + noun;

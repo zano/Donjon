@@ -46,9 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GrammarExtensions.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="Random.cs" />
-    <Compile Include="Ui.cs" />
+    <Compile Include="TupleList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ui.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

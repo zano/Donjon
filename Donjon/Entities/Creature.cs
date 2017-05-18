@@ -3,8 +3,13 @@
 namespace Donjon.Entities {
     internal abstract class Creature : Entity {
         public int Health { get; set; }
-        public int Damage { get; set; }
-        public Creature Target { get; set; }
+        public virtual int Damage { get; set; }
+        public bool IsAggressive { get; set; }
+
+        public override ConsoleColor Color {
+            get { return IsAggressive ? ConsoleColor.Red : base.Color; }
+            set { base.Color = value; }
+        }
 
         public Creature(string name, string symbol, ConsoleColor color, int health, int damage) : base(name, symbol, color) {
             Health = health;
@@ -12,7 +17,7 @@ namespace Donjon.Entities {
         }
 
         public string Fight(Creature creature) {
-            creature.Target = this;
+            creature.IsAggressive = true;
             creature.Health -= Damage;
             var fataly = "";
             if (creature.Health <= 0) {

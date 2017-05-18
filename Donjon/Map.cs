@@ -6,8 +6,8 @@ using Lib;
 
 namespace Donjon {
     internal class Map {
-        public int Height { get; set; }
-        public int Width { get; set; }
+        public int Height { get; private set; }
+        public int Width { get; private set; }
 
         public IEnumerable<Monster> Monsters => cells
             .Cast<Cell>()
@@ -19,8 +19,18 @@ namespace Donjon {
             .Where(cell => cell.Item != null)
             .Select(cell => cell.Item);
 
-        private readonly Cell[,] cells;
+        public Cell Cell(int x, int y) {
+            try {
+                return cells[x, y];
+            } catch {
+                return null;
+            }
+            ;
+        }
+
         public IEnumerable<Cell> Cells => cells.Cast<Cell>();
+
+        private readonly Cell[,] cells;
 
         public Map(int width, int height) {
             Width = width;
@@ -48,7 +58,7 @@ namespace Donjon {
                     }
                 }
                 if (Rand.Chance(20)) {
-                    switch (Rand.Next(3)) {
+                    switch (Rand.Next(7)) {
                         case 0:
                         case 1:
                             cell.Item = new Sock();
@@ -59,43 +69,44 @@ namespace Donjon {
                             cell.Item = new Coin();
                             break;
                         case 5:
-                            cell.Item = new Sword();
+                            cell.Item = new Weapon();
+                            break;
+                        case 6:
+                            cell.Item = new HealingPotion();
                             break;
                     }
-                }
-
-                var x = Lib.Rand.Next(Width);
-                var y = Lib.Rand.Next(Height);
-                cells[4, 7].Monster = new Orc();
-                cells[7, 4].Monster = new Goblin();
-
-                cells[5, 9].Item = new Coin();
-                cells[9, 5].Item = new Sock();
-                cells[9, 9].Item = new Sword();
+                }                
             }
         }
 
-        internal void Print(Hero hero) {
-                for (int y = 0; y < Height; y++) {
-                    for (int x = 0; x < Width; x++) {
-                        IDrawable d = cells[x, y];
-                        if (x == hero.X && y == hero.Y) d = hero;
+        List<Tuple<int, int>> edges = new List<Tuple<int, int>> {
+            { -1, 0 },
+            { 1, 0 },
+            { 0, -1 },
+            { 0, 1 }
+        };
+        internal bool AreAdjacent(Hero hero, Creature creature) 
+            => edges.Where(e => creature == Cell(hero.X + e.Item1, hero.Y + e.Item2)?.Monster).Any();
 
-                        Console.ForegroundColor = d.Color;
-                        Console.Write(" " + d.Symbol);
-                        Console.ResetColor();
-                    }
-                    Console.WriteLine();
+        internal void Draw(Hero hero) {
+            for (int y = 0; y < Height; y++) {
+                for (int x = 0; x < Width; x++) {
+                    IDrawable d = cells[x, y];
+                    if (x == hero.X && y == hero.Y) d = hero;
+
+                    Console.ForegroundColor = d.Color;
+                    Console.Write(" " + d.Symbol);
+                    Console.ResetColor();
                 }
+                Console.WriteLine();
             }
+        }
 
-            internal void CleanUp() {
-                foreach (var cell in cells) {
-                    if (cell.Monster?.RemoveFromCell == true) cell.Monster = null;
-                    if (cell.Item?.RemoveFromCell == true) cell.Item = null;
-                }
+        internal void CleanUp() {
+            foreach (var cell in cells) {
+                if (cell.Monster?.RemoveFromCell == true) cell.Monster = null;
+                if (cell.Item?.RemoveFromCell == true) cell.Item = null;
             }
-
-            internal Cell Cell(int x, int y) => cells[x, y];
         }
     }
+}

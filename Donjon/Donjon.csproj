@@ -52,7 +52,6 @@
     <Compile Include="Entities\IDrawable.cs" />
     <Compile Include="Entities\Item.cs" />
     <Compile Include="LimitedList.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Entities\Monster.cs" />
     <Compile Include="Program.cs" />
