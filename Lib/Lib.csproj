@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GrammarExtensions.cs" />
+    <Compile Include="LimitedList.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="TupleList.cs" />
