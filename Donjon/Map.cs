@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Donjon.Entities;
 using Lib;
+using Lib.Extensions;
 
 namespace Donjon {
     internal class Map {

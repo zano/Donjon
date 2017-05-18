@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 using Humanizer;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Lib {
+namespace Lib.Extensions {
     public static class GrammarExtensions {
         /// <summary>
         /// Usage: "car".Count(5) → "5 cars"; "bike".Count(1) → "1 bike";

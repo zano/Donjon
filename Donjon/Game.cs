@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.Remoting.Channels;
-using System.Text;
 using Lib;
-using Donjon.Entities;
+using Lib.Extensions;
 
 namespace Donjon {
     internal class Game {
@@ -83,7 +79,7 @@ namespace Donjon {
         private void Draw() {
             ui.SetCorner(0, 0);
             map.Draw(hero);
-            ui.WriteLine($" Health: {hero.Health:###} hp, Attack: {hero.Damage:###}");
+            ui.WriteLine($" Health: {hero.Health:###} hp, Weapon: {hero.Weapon.Name ?? "Fists"} {hero.Damage:###}");
             ui.WriteLine("");
             log.Flush();
 
