@@ -79,7 +79,7 @@ namespace Donjon {
         private void Draw() {
             ui.SetCorner(0, 0);
             map.Draw(hero);
-            ui.WriteLine($" Health: {hero.Health:###} hp, Weapon: {hero.Weapon.Name ?? "Fists"} {hero.Damage:###}");
+            ui.WriteLine($" Health: {hero.Health:###} hp, Weapon: {hero.Weapon?.Name ?? "Fists"} {hero.Damage:###}");
             ui.WriteLine("");
             log.Flush();
 
