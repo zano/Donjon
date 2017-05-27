@@ -3,7 +3,7 @@ using System.Linq;
 using static System.Math;
 
 namespace Lib {
-    public static class Rand {
+    public static class Randomizer {
         private static readonly Random R = new Random();
         private static readonly double K = Sqrt(2 / E);
 
@@ -19,14 +19,15 @@ namespace Lib {
         public static int Dice(int max, int min = 1) => R.Next(min, max + 1);
 
         public static int Roll(int rolls, int max, int min = 1) => new int[rolls].Sum(v => Dice(max, min));
-        
+
         /// <summary> Generate a random number from a standard normal distribution </summary>  
         /// <remarks> Using Ratio-of-uniforms method
         ///  If a dataset follows a normal distribution, then about 68% of the 
-        /// observations will fall within σ of the mean μ, which in this case is with the 
-        /// interval (-1,1). About 95% of the observations will fall within 2 standard </remarks>
+        /// observations will fall within 1 standard deviation σ of the mean μ, which in this case is with the 
+        /// interval (-1,1). About 95% of the observations will fall within 2 standard deviations</remarks>
         /// <param name="mean">50% of the results will be greater, and 50% will be less than the <code>mean</code></param>
-        /// <param name="standardDeviation">Approx 68% of the results will fall within ±1 <code>standardDeviation</code> from the <code>mean</code></param>
+        /// <param name="standardDeviation">Approx 68% of the results will fall within ±1 <code>standardDeviation</code> 
+        /// from the <code>mean</code></param>
         /// <returns></returns>
         public static double Normal(double mean = 0, double standardDeviation = 1) {
             double a, b;
@@ -54,6 +55,6 @@ namespace Lib {
                 gamma = R.NextDouble() * d / u;
             } while (2 * Log(u) > (alpha - 1) * Log(gamma) - gamma);
             return gamma;
-        }        
+        }
     }
 }
