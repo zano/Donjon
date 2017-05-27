@@ -48,8 +48,8 @@ namespace Donjon {
 
         internal void Populate() {
             foreach (var cell in cells) {
-                if (Rand.Chance(10)) {
-                    switch (Rand.Next(3)) {
+                if (Randomizer.Chance(10)) {
+                    switch (Randomizer.Next(3)) {
                         case 0:
                             cell.Monster = new Orc();
                             break;
@@ -58,8 +58,8 @@ namespace Donjon {
                             break;
                     }
                 }
-                if (Rand.Chance(20)) {
-                    switch (Rand.Next(7)) {
+                if (Randomizer.Chance(20)) {
+                    switch (Randomizer.Next(7)) {
                         case 0:
                         case 1:
                             cell.Item = new Sock();
@@ -76,7 +76,7 @@ namespace Donjon {
                             cell.Item = new HealingPotion();
                             break;
                     }
-                }                
+                }
             }
         }
 
@@ -86,7 +86,8 @@ namespace Donjon {
             { 0, -1 },
             { 0, 1 }
         };
-        internal bool AreAdjacent(Hero hero, Creature creature) 
+
+        internal bool AreAdjacent(Hero hero, Creature creature)
             => edges.Where(e => creature == Cell(hero.X + e.Item1, hero.Y + e.Item2)?.Monster).Any();
 
         internal void Draw(Hero hero) {

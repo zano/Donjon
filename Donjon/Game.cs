@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Donjon.Entities;
 using Lib;
 using Lib.Extensions;
 

@@ -1,9 +1,8 @@
 ﻿using System;
-using Donjon.Entities;
 using Lib;
 using Lib.Extensions;
 
-namespace Donjon {
+namespace Donjon.Entities {
     internal class Hero : Creature {
         // override Creature's override
 
@@ -48,8 +47,8 @@ namespace Donjon {
             }
 
             log.Flush();
-            return message != "" 
-                ? message 
+            return message != ""
+                ? message
                 : item.Name.A() + " can't be \"used\"";
         }
 

@@ -19,9 +19,11 @@ namespace Donjon.Entities {
 
     class Weapon : Item {
         public int Damage { get; }
+
         public Weapon(int damage = 20) : base("Sword", "!", ConsoleColor.Blue) {
             Damage = damage;
         }
+
         public override string ToString() => base.ToString() + $" ({Damage} p)";
     }
 
@@ -38,6 +40,7 @@ namespace Donjon.Entities {
             hero.Health += 50;
             return $"The {hero.Name} feels vigorated. The potion restored {Strenght} hp";
         }
+
         public override string ToString() => base.ToString() + $" ({Strenght} p)";
     }
 }
