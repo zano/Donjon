@@ -1,21 +1,19 @@
-﻿using System;
-using Lib.Extensions;
+using System;
 
-namespace OldDonjon.Entities {
-    internal abstract class Entity : IDrawable {
-        public string Name { get; set; }
-        public virtual string Symbol { get; protected set; }
-        public virtual ConsoleColor Color { get; set; }
-        public bool RemoveFromCell = false;
+namespace Donjon.Entities {
+    abstract class Entity : IDrawable {
+        public virtual string Name { get; }
+        public virtual string Symbol { get; }
+        public virtual ConsoleColor Color { get; }
 
-        public Entity(string name, string symbol, ConsoleColor color) {
+        protected Entity(string name, string symbol, ConsoleColor color) {
             Name = name;
-            Symbol = symbol; // Virtual member call in constructor. Beware!
-            Color = color; // Virtual member call in constructor. Beware!
+            Symbol = symbol;
+            Color = color;
         }
 
         public override string ToString() {
-            return Name.A();
+            return Name;
         }
     }
 }

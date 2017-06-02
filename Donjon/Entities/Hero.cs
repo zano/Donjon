@@ -1,65 +1,99 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Security.Policy;
 using Lib;
 using Lib.Extensions;
 
-namespace OldDonjon.Entities {
-    internal class Hero : Creature {
-        // override Creature's override
+namespace Donjon.Entities {
+    class Hero : Creature {
+        public Weapon Wielding { get; set; }
+        public LimitedList<Item> Backpack { get; } = new LimitedList<Item>(8);
 
-        public override int Damage {
-            get { return Weapon?.Damage ?? base.Damage; }
-            set { base.Damage = value; }
-        }
+        // Override Attack to take weapon into account 
+        public override int Attack => base.Attack + (Wielding?.Attack ?? 0);
 
-        public override ConsoleColor Color { get; set; }
+        public Hero(int health) : base("Hero", "H", ConsoleColor.Cyan, health, attack: 20) {}
 
-        public int X { get; set; }
-        public int Y { get; set; }
-        public LimitedList<Item> Backpack { get; } = new LimitedList<Item>(6);
-
-        public Hero(int health) : base("Hero", "H", ConsoleColor.White, health, 100) {}
-
-        public string PickUp(Item item) {
-            if (Backpack.Add(item)) {
-                item.RemoveFromCell = true;
-                return $"You pick up the {item.Name}.";
+        public Result Fight(Cell cell) {
+            var monster = cell.Monster;
+            var result = Fight(monster);
+            if (monster.IsDead) {
+                cell.Monster = null;
+                if (cell.Item == null) cell.Item = ItemFactory.Corpse(monster);
             }
-            return $"The backpack is full, so you couldn't pick up the {item.Name}.";
+            return result;
         }
 
-        internal string Inventory() {
-            string message = $"Your backpack contains {"items".Counted(Backpack.Count)}\n";
+        public Result PickUpItem(Cell cell) {
+            var item = cell.Item;
+            if (item == null) return Result.NoAction("There is nothing to pick up here");
+
+            if (Wielding == null && item is Weapon) {
+                cell.Item = null;
+                return Wield((Weapon)item);
+            }
+
+            var stack = item as IStackable;
+            if (stack != null) {
+                var bpStack = (IStackable)Backpack.FirstOrDefault(i => i.GetType() == stack.GetType() && i.Name == item.Name);
+                if (bpStack != null) {
+                    bpStack.Stack(stack);
+                    cell.Item = null;
+                    return Result.Action($"You pick up the {item.Name}.");
+                }
+            }
+
+            if (Backpack.IsFull) return Result.Action($"The backpack is full, so you couldn't pick up the {item.Name}.");
+
+            Backpack.Add(item);
+            cell.Item = null;
+
+            return Result.Action($"You pick up the {item.Name}.");
+        }
+
+        public Result Drop(Item item, Cell cell) {
+            if (cell.Item != null) return Result.NoAction($"You can't drop the {item.Name}, there's already stuff here");
+
+            cell.Item = item;
+            if (Backpack.Contains(item)) Backpack.Remove(item);
+            if (Wielding == item) Wielding = null;
+
+            return Result.Action($"You dropped the {item.Name}");
+        }
+
+        public Result Inventory() {
+            string message = $"Your backpack contains {"item".Counted(Backpack.Count)}\n";
             foreach (var item in Backpack) {
-                message += $"  {item.Name.A()}\n";
+                message += $"  {item}\n";
             }
-            return message;
+            return Result.NoAction(message);
         }
 
-        public string Use(Item item) {
-            var message = "";
-            var log = new Log(m => message += m);
+        public Result Use(Item item) {
+            if (item is Weapon) return WieldFromBackpack(item as Weapon);
 
-            if (item is Weapon) log.Add(Wield(item as Weapon));
-
-            if (item is IAffecting) {
-                log.Add((item as IAffecting).Affect(this));
-                var removed = Backpack.Remove(item);
+            if (item is IConsumable) {
+                return Consume((IConsumable)item);
             }
-
-            log.Flush();
-            return message != ""
-                ? message
-                : item.Name.A() + " can't be \"used\"";
+            return Result.NoAction($"You can't use {item}");
         }
 
-        public Weapon Weapon { get; private set; }
+        private Result Consume(IConsumable consumable) {
+            Backpack.Remove(consumable as Item);
+            return consumable.Affect(this);
+        }
 
-        private string Wield(Weapon weapon) {
-            var limbo = Weapon;
+        private Result WieldFromBackpack(Weapon weapon) {
+            var unwield = Wielding;
             Backpack.Remove(weapon);
-            Weapon = weapon;
-            if (limbo != null) Backpack.Add(Weapon); // Todo: Or drop weapon
-            return $"{Name} wields the {weapon.Name}";
+            if (unwield != null) Backpack.Add(unwield);
+            return Wield(weapon);
+        }
+
+        private Result Wield(Weapon weapon) {
+            Wielding = weapon;
+            return Result.Action($"You wield the {weapon.Name}");
         }
     }
 }

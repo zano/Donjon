@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OldDonjon", "Donjon\OldDonjon.csproj", "{74BA3128-BDBE-47BC-8101-02D2C960035F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OldDonjon", "OldDonjon\OldDonjon.csproj", "{74BA3128-BDBE-47BC-8101-02D2C960035F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib", "Lib\Lib.csproj", "{E68C8C5E-DC90-4C56-8351-11BECCF78C29}"
 EndProject
@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnicodeConsole", "UnicodeCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibTests", "LibTests\LibTests.csproj", "{AFD4F23A-4449-4653-9ED1-E016EDFB7164}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Donjon", "Donjon2\Donjon.csproj", "{50D99A53-6537-41C1-BEF7-74B56FDB44F5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Donjon", "Donjon\Donjon.csproj", "{50D99A53-6537-41C1-BEF7-74B56FDB44F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

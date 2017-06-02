@@ -1,30 +1,35 @@
-﻿using System;
+using System;
+using Lib;
 
-namespace OldDonjon.Entities {
-    internal abstract class Creature : Entity {
+namespace Donjon.Entities {
+    class Creature : Entity {
+        public int X { get; set; }
+        public int Y { get; set; }
+
+        public int MaxHealth { get; set; }
         public int Health { get; set; }
-        public virtual int Damage { get; set; }
-        public bool IsAggressive { get; set; }
+        public virtual int Attack { get; }
+        public bool IsDead => Health <= 0;
 
-        public override ConsoleColor Color {
-            get { return IsAggressive ? ConsoleColor.Red : base.Color; }
-            set { base.Color = value; }
+        public Creature(string name, string symbol, ConsoleColor color, int health, int attack) : base(name, symbol, color) {
+            MaxHealth = Health = health;
+            Attack = attack;
         }
 
-        public Creature(string name, string symbol, ConsoleColor color, int health, int damage) : base(name, symbol, color) {
-            Health = health;
-            Damage = damage;
+        public Result Fight(Monster monster) {
+            monster.IsAggressive = true;
+            return Fight(monster as Creature);
         }
 
-        public string Fight(Creature creature) {
-            creature.IsAggressive = true;
-            creature.Health -= Damage;
-            var fataly = "";
-            if (creature.Health <= 0) {
-                fataly = " fataly";
-                creature.RemoveFromCell = true;
-            }
-            return $"The {Name} attacks the {creature.Name}{fataly} for {Damage} damage";
+        public Result Fight(Creature creature) {
+            var damage = Randomizer.Dice(Attack);
+            creature.Health -= damage;
+            var fataly = creature.IsDead ? " fataly" : "";
+            return Result.Action($"The {Name} attacks the {creature.Name}{fataly} for {damage} damage");
+        }
+
+        public override string ToString() {
+            return base.ToString() + $" ({Attack / Health})";
         }
     }
 }
