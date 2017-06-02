@@ -9,7 +9,7 @@ namespace Lib.Extensions {
         /// <param name="noun"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public static string Count(this string noun, int count)
+        public static string Counted(this string noun, int count)
             => count > 2
                 ? noun.ToQuantity(count)
                 : noun.ToQuantity(count, ShowQuantityAs.Words);

@@ -7,6 +7,7 @@ namespace Lib {
 
         public int Capacity { get; }
         public int Count => items.Count;
+        public bool IsFull => items.Count >= Capacity;
 
         public LimitedList(int capacity) {
             Capacity = capacity;
@@ -18,12 +19,12 @@ namespace Lib {
             set { items[index] = value; }
         }
 
-        public bool Add(T item) {
-            if (items.Count < Capacity) {
-                items.Add(item);
-                return true;
-            }
-            return false;
+
+        public bool Add(T item)
+        {
+            if (IsFull) return false;
+            items.Add(item);
+            return true;
         }
 
         public bool Remove(T item) {

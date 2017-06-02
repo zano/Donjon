@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Donjon {
+namespace OldDonjon {
     class Program {
         static void Main(string[] args) {
             Console.CursorVisible = false;

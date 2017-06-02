@@ -12,8 +12,9 @@ namespace Lib {
             this.writer = writer;
         }
 
-
-        public void Add(string message) => log.Add(message ?? "");
+        public void Add(params string[] messages) {
+            foreach (var message in messages) log.Add(message ?? "");
+        }
 
         public void Clear() => log.Clear();
 

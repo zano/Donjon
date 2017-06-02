@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Donjon.Entities;
 using Lib;
 using Lib.Extensions;
+using OldDonjon.Entities;
 
-namespace Donjon {
+namespace OldDonjon {
     internal class Game {
         private bool quit = false;
 

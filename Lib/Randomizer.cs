@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using static System.Math;
 
@@ -9,6 +11,9 @@ namespace Lib {
 
         public static bool Chance(int chanceForSuccess) => R.Next(100) < chanceForSuccess;
 
+        public static bool ChanceD(double chanceForSuccess)
+            => R.NextDouble() < chanceForSuccess;
+
         public static int Next(int max) => R.Next(max);
         public static int Next(int min, int max) => R.Next(min, max);
 
@@ -16,9 +21,11 @@ namespace Lib {
         /// <param name="min">The lowest possible result</param>
         /// <param name="max">The highest possible result</param>
         /// <returns></returns>
-        public static int Dice(int max, int min = 1) => R.Next(min, max + 1);
+        public static int Dice(int max, int min = 1)
+            => R.Next(min, max + 1);
 
-        public static int Roll(int rolls, int max, int min = 1) => new int[rolls].Sum(v => Dice(max, min));
+        public static int Roll(int rolls, int max, int min = 1)
+            => new int[rolls].Sum(v => Dice(max, min));
 
         /// <summary> Generate a random number from a standard normal distribution </summary>  
         /// <remarks> Using Ratio-of-uniforms method
@@ -56,5 +63,45 @@ namespace Lib {
             } while (2 * Log(u) > (alpha - 1) * Log(gamma) - gamma);
             return gamma;
         }
+
+        public static T Pick<T>(this Distribution<T> distribution) {
+            var dice = Dice(distribution.Amount);
+            return distribution
+                .First(e => (dice -= e.Count) <= 0)
+                .Generator();
+        }
+
+        //public static T Pick<T>(ICollection<Tuple<int, Func<T>>> distribution) {
+        //    var mSum = distribution.Sum(t => t.Item1);
+        //    var dice = Dice(mSum);
+        //    var limit = 0;
+        //    return distribution
+        //        .First(m => (limit += m.Item1) >= dice)
+        //        .Item2();
+        //}
+    }
+
+    public class Entry<T> {
+        public int Count { get; set; }
+        public Func<T> Generator { get; set; }
+
+        internal Entry(int count, Func<T> generator) {
+            Count = count;
+            Generator = generator;
+        }
+    }
+
+    public class Distribution<T> : IReadOnlyCollection<Entry<T>> {
+        private readonly ICollection<Entry<T>> distribution = new List<Entry<T>>();
+
+        public void Add(int count, Func<T> generator) => distribution.Add(new Entry<T>(count, generator));
+
+        public int Amount => distribution.Sum(t => t.Count);
+
+        public int Count => distribution.Count;
+
+        public IEnumerator<Entry<T>> GetEnumerator() => distribution.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

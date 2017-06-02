@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Donjon.Entities;
 using Lib;
 using Lib.Extensions;
+using OldDonjon.Entities;
 
-namespace Donjon {
+namespace OldDonjon {
     internal class Map {
         public int Height { get; private set; }
         public int Width { get; private set; }

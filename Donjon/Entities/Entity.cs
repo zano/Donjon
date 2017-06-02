@@ -1,6 +1,7 @@
 ﻿using System;
+using Lib.Extensions;
 
-namespace Donjon.Entities {
+namespace OldDonjon.Entities {
     internal abstract class Entity : IDrawable {
         public string Name { get; set; }
         public virtual string Symbol { get; protected set; }
@@ -14,7 +15,7 @@ namespace Donjon.Entities {
         }
 
         public override string ToString() {
-            return Name;
+            return Name.A();
         }
     }
 }

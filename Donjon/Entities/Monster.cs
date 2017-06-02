@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Donjon.Entities {
+namespace OldDonjon.Entities {
     internal abstract class Monster : Creature {
         public Monster(string name, string symbol, ConsoleColor color, int health, int damage)
             : base(name, symbol, color, health, damage) {}

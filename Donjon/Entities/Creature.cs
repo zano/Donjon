@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Donjon.Entities {
+namespace OldDonjon.Entities {
     internal abstract class Creature : Entity {
         public int Health { get; set; }
         public virtual int Damage { get; set; }

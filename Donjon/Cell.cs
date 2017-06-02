@@ -1,7 +1,7 @@
 ﻿using System;
-using Donjon.Entities;
+using OldDonjon.Entities;
 
-namespace Donjon {
+namespace OldDonjon {
     internal class Cell : IDrawable {
         public Monster Monster { get; set; }
         public Item Item { get; set; }

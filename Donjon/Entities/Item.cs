@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Donjon.Entities {
+namespace OldDonjon.Entities {
     interface IAffecting {
         string Affect(Hero hero); // or creature
     }

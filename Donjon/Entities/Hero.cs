@@ -2,7 +2,7 @@
 using Lib;
 using Lib.Extensions;
 
-namespace Donjon.Entities {
+namespace OldDonjon.Entities {
     internal class Hero : Creature {
         // override Creature's override
 
@@ -28,7 +28,7 @@ namespace Donjon.Entities {
         }
 
         internal string Inventory() {
-            string message = $"Your backpack contains {"items".Count(Backpack.Count)}\n";
+            string message = $"Your backpack contains {"items".Counted(Backpack.Count)}\n";
             foreach (var item in Backpack) {
                 message += $"  {item.Name.A()}\n";
             }
