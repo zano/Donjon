@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Concurrent;
 using System.Linq;
-using System.Security.Policy;
 using Lib;
 using Lib.Extensions;
 
@@ -13,7 +11,7 @@ namespace Donjon.Entities {
         // Override Attack to take weapon into account 
         public override int Attack => base.Attack + (Wielding?.Attack ?? 0);
 
-        public Hero(int health) : base("Hero", "H", ConsoleColor.Cyan, health, attack: 20) {}
+        public Hero(int health) : base("Hero", "@", ConsoleColor.Cyan, health, attack: 20) {}
 
         public Result Fight(Cell cell) {
             var monster = cell.Monster;
