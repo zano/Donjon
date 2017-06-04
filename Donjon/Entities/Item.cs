@@ -41,9 +41,14 @@ namespace Donjon.Entities {
 
     static class ItemFactory {
         public static Weapon Sword() => Sword(R.Dice(4, 2) * 10);
-        public static Weapon Sword(int attack) => new Weapon("sword", "†", ConsoleColor.White, attack);
+        public static Weapon Sword(int attack) => new Weapon("sword", "/", ConsoleColor.White, attack);
 
-        public static StackableItem Coin() => new StackableItem("coin", "c", ConsoleColor.Yellow);
+        public static Weapon Dagger() => Dagger(R.Dice(2) * 10);
+        public static Weapon Dagger(int attack) => new Weapon("dagger", "†", ConsoleColor.White, attack);
+
+        public static StackableItem Coin() => Coin(1);
+        public static StackableItem Coins() => Coin(R.Dice(10,2));
+        public static StackableItem Coin(int amount) => new StackableItem("coin", "c", ConsoleColor.Yellow, amount);
 
         public static Item Corpse(Monster monster)
             => new Item(monster.Name + " corpse", monster.Symbol, ConsoleColor.Gray);
@@ -81,7 +86,7 @@ namespace Donjon.Entities {
     class HealthPotion : Item, IConsumable {
         public int Health { get; }
 
-        public HealthPotion(int health) : base("health potion", "h", ConsoleColor.Yellow) {
+        public HealthPotion(int health) : base("health potion", "h", ConsoleColor.Green) {
             Health = health;
         }
 
