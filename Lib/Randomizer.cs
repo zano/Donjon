@@ -21,8 +21,8 @@ namespace Lib {
         /// <param name="min">The lowest possible result</param>
         /// <param name="max">The highest possible result</param>
         /// <returns></returns>
-        public static int Dice(int max, int min = 1)
-            => R.Next(min, max + 1);
+        public static int Dice(int max, int min = 1) 
+            => max < min ? Dice(min, max) : R.Next(min, max + 1);
 
         public static int Roll(int rolls, int max, int min = 1)
             => new int[rolls].Sum(v => Dice(max, min));
@@ -71,14 +71,12 @@ namespace Lib {
                 .Generator();
         }
 
-        //public static T Pick<T>(ICollection<Tuple<int, Func<T>>> distribution) {
-        //    var mSum = distribution.Sum(t => t.Item1);
-        //    var dice = Dice(mSum);
-        //    var limit = 0;
-        //    return distribution
-        //        .First(m => (limit += m.Item1) >= dice)
-        //        .Item2();
-        //}
+        public static IEnumerable<T> Permutate<T>(this IList<T> list) {
+            var listCount = list.Count;
+            var next = list[R.Next(listCount)];
+            list.Remove(next);
+            yield return next;
+        }
     }
 
     public class Entry<T> {

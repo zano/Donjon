@@ -4,6 +4,35 @@ using System.Text;
 
 namespace Lib {
     public class Ui {
+        private ConsoleColor backgroundColor;
+        private ConsoleColor foregroundColor;
+
+        public int Left { get; private set; }
+        public int Top { get; private set; }
+
+        public int Width => Console.WindowWidth;
+        public int Height => Console.WindowHeight;
+
+        public ConsoleColor ForegroundColor {
+            get { return foregroundColor; }
+            set {
+                if (foregroundColor != value) {
+                    foregroundColor = value;
+                    Console.ForegroundColor = value;
+                }
+            }
+        }
+
+        public ConsoleColor BackgroundColor {
+            get { return backgroundColor; }
+            set {
+                if (backgroundColor != value) {
+                    backgroundColor = value;
+                    Console.BackgroundColor = value;
+                }
+            }
+        }
+
         public Ui(int width, int height) : this() {
             Console.WindowWidth = Math.Min(width, Console.LargestWindowWidth);
             Console.WindowHeight = Math.Min(height, Console.LargestWindowHeight);
@@ -17,12 +46,6 @@ namespace Lib {
 
         public event ConsoleCancelEventHandler CancelKeyPress;
 
-        public int Left { get; private set; }
-        public int Top { get; private set; }
-
-        public int Width => Console.WindowWidth;
-        public int Height => Console.WindowHeight;
-
         public ConsoleKey AskForKey(string question) {
             Write(question);
             return Console.ReadKey(intercept: true).Key;
@@ -34,7 +57,7 @@ namespace Lib {
         }
 
         public bool AskForIntOnce(string question, out int number)
-            => int.TryParse(AskForString(question), out number);
+            => Int32.TryParse(AskForString(question), out number);
 
         public int AskForInt(string question) {
             do {
@@ -54,18 +77,22 @@ namespace Lib {
 
         public void Write(string message) => Console.Write(message);
 
-        public void Write(ConsoleColor color, string message) {
-            Console.ForegroundColor = color; 
+        public void Write(string message, ConsoleColor color) {
+            ForegroundColor = color;
             Write(message);
-            Console.ResetColor();
         }
 
-        private string Pad(string message) => message.PadRight(Console.WindowWidth - Console.CursorLeft);
+        public void Write(string message, ConsoleColor color, ConsoleColor background) {
+            BackgroundColor = background;
+            Write(message, color);
+        }
 
         public void SetCorner(int left, int top) {
             Left = left;
             Top = top;
             Console.SetCursorPosition(left, top);
         }
+
+        private string Pad(string message) => message.PadRight(Console.WindowWidth - Console.CursorLeft);
     }
 }

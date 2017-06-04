@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{50D99A53-6537-41C1-BEF7-74B56FDB44F5}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Donjon2</RootNamespace>
-    <AssemblyName>Donjon2</AssemblyName>
+    <RootNamespace>Donjon</RootNamespace>
+    <AssemblyName>Donjon</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

@@ -24,7 +24,7 @@ namespace Donjon {
             cells = new Cell[width, height];
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    cells[x, y] = new Cell(x,y);
+                    cells[x, y] = new Cell(x, y);
                 }
             }
         }
@@ -42,13 +42,17 @@ namespace Donjon {
                 for (int x = 0; x < Width; x++) {
                     IDrawable d = cells[x, y];
                     if (x == Hero.X && y == Hero.Y) d = Hero;
-                    ui.Write(d.Color, " " + d.Symbol);
+
+                    var bgColor = ConsoleColor.Black;
+                    if (cells[x, y].IsWall) bgColor = ConsoleColor.DarkGray;
+                    ui.Write(" " + d.Symbol, d.Color, bgColor);
                 }
+                ui.BackgroundColor = ConsoleColor.Black;
                 ui.WriteLine();
             }
         }
 
-        public bool IsWall(int x, int y) 
+        public bool IsWall(int x, int y)
             => x < 0 || y < 0 || x >= Width || y >= Height || cells[x, y].IsWall;
 
         internal bool AreAdjacent(Creature c1, Creature c2)

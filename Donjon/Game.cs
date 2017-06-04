@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ExceptionServices;
+using System.Threading;
 using Donjon.Entities;
 using Lib;
-using Lib.Extensions;
 using R = Lib.Randomizer;
 
 namespace Donjon {
@@ -18,7 +16,7 @@ namespace Donjon {
         public Game(Ui ui) {
             this.ui = ui;
             ui.CancelKeyPress += Quit;
-            map = new Map(ui, ui.Width / 4, ui.Height / 2);
+            map = new Map(ui, ui.Width / 2 - 16, ui.Height - 16);
             log = new Log(ui.WriteLine);
         }
 
@@ -32,50 +30,73 @@ namespace Donjon {
             Initialize();
             while (playing) {
                 Draw();
+                Thread.Sleep(200);
                 var result = PlayerAction();
-                log.Add(result.Message);
+                log.Add(result.Message?.Split('\n') ?? new string[] { });
                 if (playing && result.IsAction) GameAction();
             }
+            log.Add("   --- *** Game over *** ---");
             Draw();
         }
 
         private void Initialize() {
             Populate();
+            hero.X = map.Width / 2;
+            hero.Y = map.Height / 2;
             map.Hero = hero;
         }
 
         private void Populate() {
+            var mazeConfig = new MazeConfig {
+                ConnectLeft = false,
+                StraightPassageways = true,
+                ConnectCenter = true
+            };
+            var maze = new Maze(map.Width, map.Height, mazeConfig);
+            foreach (var cell in map.Cells) {
+                switch (maze.Map[cell.X, cell.Y]) {
+                    case CellType.Wall:
+                        cell.IsWall = true;
+                        break;
+                    case CellType.Door:
+                        cell.Item = new Item("Door", "D", ConsoleColor.Magenta);
+                        break;
+                }
+            }
+
             var distributionOfMonsters = new Distribution<Monster> {
                 { 2, MonsterFactory.Goblin },
                 { 1, MonsterFactory.Troll },
             };
-            var distributionOfItems = new Distribution<Item>() {
+            var distributionOfItems = new Distribution<Item> {
+                { 20, ItemFactory.Coin },
+                { 20, ItemFactory.Coins },
+                { 10, () => new HealthPotion(R.Dice(4) * 20) },
+                { 05, () => new TeleportPotion(map) },
+                { 02, ItemFactory.Dagger },
                 { 01, ItemFactory.Sword },
-                { 10, ItemFactory.Coin },
-                { 05, () => new HealthPotion(R.Dice(4) * 20) },
-                { 03, () => new TeleportPotion(map) },
             };
-            foreach (var cell in map.Cells) {
+
+            foreach (var cell in map.Cells.Where(c => !c.IsWall)) {
                 if (R.ChanceD(.01)) cell.Monster = distributionOfMonsters.Pick();
-                if (R.ChanceD(.1)) cell.Item = distributionOfItems.Pick();
+                if (R.ChanceD(.1) && cell.Item == null) cell.Item = distributionOfItems.Pick();
             }
         }
 
         private void Draw() {
             ui.SetCorner(0, 0);
             map.Draw();
-            ui.WriteLine($" Health: {hero.Health:###} hp");
+            ui.WriteLine($" Health: {hero.Health:##0} hp");
             ui.WriteLine($" {hero.Wielding?.Name ?? "Fists"}: {hero.Attack:###}");
 
             var cell = map.Cell(hero.X, hero.Y);
-            ui.WriteLine($" You see {cell.Item:10#}");
+            if (cell.Item != null) ui.WriteLine($" You see {cell.Item}");
             ui.WriteLine("");
 
             log.Flush();
-            ui.WriteLine("------");
             ui.WriteLine();
 
-            ui.SetCorner(ui.Width / 2 + 1, 0);
+            ui.SetCorner(map.Width * 2 + 1, 0);
             ui.WriteLine(new[] {
                 "Arrow keys for movement",
                 "I: Inventory",
@@ -87,6 +108,7 @@ namespace Donjon {
 
         private Result PlayerAction() {
             var key = Console.ReadKey(intercept: true).Key;
+            while (Console.KeyAvailable) Console.ReadKey(); // flush input stream
             switch (key) {
                 case ConsoleKey.NumPad8:
                 case ConsoleKey.UpArrow:
@@ -176,6 +198,7 @@ namespace Donjon {
             foreach (var monster in aggressive) {
                 if (map.AreAdjacent(hero, monster)) log.Add(monster.Fight(hero).Message);
             }
+            if (hero.IsDead) playing = false;
         }
     }
 }
