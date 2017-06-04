@@ -15,6 +15,6 @@ namespace Donjon.Entities {
             => new Monster("Troll", "T", ConsoleColor.DarkMagenta, 80, 40);
 
         public static Monster Goblin()
-            => new Monster("Goblin", "G", ConsoleColor.DarkGreen, 40, 10);
+            => new Monster("Goblin", "G", ConsoleColor.DarkMagenta, 40, 10);
     }
 }
