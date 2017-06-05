@@ -21,7 +21,7 @@ namespace Lib {
         /// <param name="min">The lowest possible result</param>
         /// <param name="max">The highest possible result</param>
         /// <returns></returns>
-        public static int Dice(int max, int min = 1) 
+        public static int Dice(int max, int min = 1)
             => max < min ? Dice(min, max) : R.Next(min, max + 1);
 
         public static int Roll(int rolls, int max, int min = 1)
@@ -64,32 +64,33 @@ namespace Lib {
             return gamma;
         }
 
-        public static T Pick<T>(this Distribution<T> distribution) {
-            var dice = Dice(distribution.Amount);
-            return distribution
-                .First(e => (dice -= e.Count) <= 0)
-                .Generator();
-        }
-
         public static IEnumerable<T> Permutate<T>(this IList<T> list) {
-            var listCount = list.Count;
-            var next = list[R.Next(listCount)];
-            list.Remove(next);
-            yield return next;
+            list = list.Select(t => t).ToList();
+            for (int size = list.Count; size > 0; size--) {
+                var index = R.Next(size);
+                var next = list[index];
+                list.RemoveAt(index);
+                yield return next;
+            }
         }
     }
 
-    public class Entry<T> {
-        public int Count { get; set; }
-        public Func<T> Generator { get; set; }
+    internal class Entry<T> {
+        public int Count { get; }
+        public Func<T> Generator { get; }
 
-        internal Entry(int count, Func<T> generator) {
+        public Entry(int count, Func<T> generator) {
             Count = count;
             Generator = generator;
         }
     }
 
-    public class Distribution<T> : IReadOnlyCollection<Entry<T>> {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <remarks>Implements IEnumerable to allow collection initializer</remarks>
+    public class Distribution<T> : IEnumerable {
         private readonly ICollection<Entry<T>> distribution = new List<Entry<T>>();
 
         public void Add(int count, Func<T> generator) => distribution.Add(new Entry<T>(count, generator));
@@ -98,8 +99,13 @@ namespace Lib {
 
         public int Count => distribution.Count;
 
-        public IEnumerator<Entry<T>> GetEnumerator() => distribution.GetEnumerator();
+        public IEnumerator GetEnumerator() => distribution.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public T Pick() {
+            var dice = Randomizer.Dice(Amount);
+            return distribution
+                .First(e => (dice -= e.Count) <= 0)
+                .Generator();
+        }
     }
 }
