@@ -25,7 +25,7 @@ namespace Donjon.Entities {
             var damage = Randomizer.Dice(Attack);
             creature.Health -= damage;
             var fataly = creature.IsDead ? " fataly" : "";
-            return Result.Action($"The {Name} attacks the {creature.Name}{fataly} for {damage} damage");
+            return Result.LastAction($"The {Name} attacks the {creature.Name}{fataly} for {damage} damage");
         }
 
         public override string ToString() {

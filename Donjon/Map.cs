@@ -40,12 +40,10 @@ namespace Donjon {
         public void Draw() {
             for (int y = 0; y < Height; y++) {
                 for (int x = 0; x < Width; x++) {
-                    IDrawable d = cells[x, y];
+                    Cell cell = cells[x, y];
+                    IDrawable d = cell;
                     if (x == Hero.X && y == Hero.Y) d = Hero;
-
-                    var bgColor = ConsoleColor.Black;
-                    if (cells[x, y].IsWall) bgColor = ConsoleColor.DarkGray;
-                    ui.Write(" " + d.Symbol, d.Color, bgColor);
+                    ui.Write(" " + d.Symbol, d.Color, cell.Background);
                 }
                 ui.BackgroundColor = ConsoleColor.Black;
                 ui.WriteLine();
@@ -53,9 +51,10 @@ namespace Donjon {
         }
 
         public bool IsWall(int x, int y)
-            => x < 0 || y < 0 || x >= Width || y >= Height || cells[x, y].IsWall;
+            => x < 0 || y < 0 || x >= Width || y >= Height || cells[x, y].Obstructing;
 
-        internal bool AreAdjacent(Creature c1, Creature c2)
-            => Math.Abs(c1.X - c2.X) + Math.Abs(c1.Y - c2.Y) == 1;
+        public bool AreAdjacent(Creature c1, Creature c2) => Distance(c1, c2) == 1;
+
+        public int Distance(Creature c1, Creature c2) => Math.Abs(c1.X - c2.X) + Math.Abs(c1.Y - c2.Y);
     }
 }

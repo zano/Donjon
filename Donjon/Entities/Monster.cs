@@ -8,6 +8,7 @@ namespace Donjon.Entities {
 
         public Monster(string name, string symbol, ConsoleColor color, int health, int attack)
             : base(name, symbol, color, health, attack) {}
+        
     }
 
     static class MonsterFactory {

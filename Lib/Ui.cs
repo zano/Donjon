@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration.Assemblies;
 using System.Text;
 
 namespace Lib {
@@ -75,6 +76,12 @@ namespace Lib {
             Console.CursorLeft = Left;
         }
 
+        public void WriteAt(int left, int top, string message) {
+            Console.SetCursorPosition(Left + left, Top + top);
+            Console.Write(message);
+        }
+            
+
         public void Write(string message) => Console.Write(message);
 
         public void Write(string message, ConsoleColor color) {
@@ -93,6 +100,6 @@ namespace Lib {
             Console.SetCursorPosition(left, top);
         }
 
-        private string Pad(string message) => message.PadRight(Console.WindowWidth - Console.CursorLeft);
+        private string Pad(string message) => message.PadRight(Math.Max(0, Console.WindowWidth - Console.CursorLeft));
     }
 }

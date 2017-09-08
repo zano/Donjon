@@ -65,6 +65,10 @@
       <Project>{e68c8c5e-dc90-4c56-8351-11beccf78c29}</Project>
       <Name>Lib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Maze\Maze.csproj">
+      <Project>{647aadcd-55d5-4bf3-aacd-afe09c6a966c}</Project>
+      <Name>Maze</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,14 +1,19 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Donjon.Entities;
 using Lib;
+using Maze;
 using R = Lib.Randomizer;
 
 namespace Donjon {
     class Game {
         private readonly Ui ui;
         private bool playing = true;
+        private int actionPoints;
         private readonly Map map;
         private readonly Log log;
         private readonly Hero hero = new Hero(100);
@@ -28,14 +33,25 @@ namespace Donjon {
 
         public void Play() {
             Initialize();
+            Draw();
+
             while (playing) {
+                actionPoints = 2;
                 Draw();
-                Thread.Sleep(200);
-                var result = PlayerAction();
-                log.Add(result.Message?.Split('\n') ?? new string[] { });
-                if (playing && result.IsAction) GameAction();
+                do
+                {
+                    var result = PlayerAction();
+                    log.Add(result.Message?.Split('\n') ?? new string[] { });
+                    if (result.IsAction) actionPoints--;
+                    if (result.EndsTurn) actionPoints = 0;
+                    Draw();
+                } while (playing && actionPoints > 0);
+
+                if (playing) GameAction();
+                Draw();
+                //Thread.Sleep(1500);
             }
-            log.Add("   --- *** Game over *** ---");
+            log.Add("   --- === Game over === ---");
             Draw();
         }
 
@@ -49,17 +65,27 @@ namespace Donjon {
         private void Populate() {
             var mazeConfig = new MazeConfig {
                 ConnectLeft = false,
-                StraightPassageways = true,
+                StraightPassageways = false,
                 ConnectCenter = true
             };
-            var maze = new Maze(map.Width, map.Height, mazeConfig);
+            var maze = MazeBuilder.Generate(map.Width, map.Height, mazeConfig);
             foreach (var cell in map.Cells) {
                 switch (maze.Map[cell.X, cell.Y]) {
-                    case CellType.Wall:
-                        cell.IsWall = true;
+                    case MazeBuilder.CellType.Wall:
+                        cell.CellType = CellType.Wall;
                         break;
-                    case CellType.Door:
-                        cell.Item = new Item("Door", "D", ConsoleColor.Magenta);
+                    case MazeBuilder.CellType.Door:
+                        cell.CellType = CellType.Door;
+//                      cell.Item = new Item("Door", "D", ConsoleColor.Magenta);
+                        break;
+                    case MazeBuilder.CellType.StairsUp:
+                        cell.CellType = CellType.StairsAscending;
+                        break;
+                    case MazeBuilder.CellType.StairsDown:
+                        cell.CellType = CellType.StairsDescending;
+                        break;
+                    case MazeBuilder.CellType.Open:
+                        cell.CellType = CellType.Open;
                         break;
                 }
             }
@@ -77,23 +103,29 @@ namespace Donjon {
                 { 01, ItemFactory.Sword },
             };
 
-            foreach (var cell in map.Cells.Where(c => !c.IsWall)) {
-                if (R.ChanceD(.01)) cell.Monster = distributionOfMonsters.Pick();
-                if (R.ChanceD(.1) && cell.Item == null) cell.Item = distributionOfItems.Pick();
+            var cells = map.Cells.Where(c => !c.Obstructing);
+            
+            Queue<Item> items = null;
+       
+            foreach (var cell in cells) {         
+                if (items == null || items.Count  <= 0) items = distributionOfItems.RandomQueue();
+
+                if (R.Chance(.02) && cell.Monster == null) cell.Monster = distributionOfMonsters.PickRandom();
+                if (R.Chance(.02) && cell.Item == null) cell.Item = /*distributionOfItems.PickRandom();*/ items.Dequeue();
+
             }
         }
 
         private void Draw() {
             ui.SetCorner(0, 0);
             map.Draw();
-            ui.WriteLine($" Health: {hero.Health:##0} hp");
+            ui.WriteLine($" {actionPoints:0} ap");
+            ui.WriteLine($" {hero.Health:##0} hp");
             ui.WriteLine($" {hero.Wielding?.Name ?? "Fists"}: {hero.Attack:###}");
 
-            var cell = map.Cell(hero.X, hero.Y);
-            if (cell.Item != null) ui.WriteLine($" You see {cell.Item}");
-            ui.WriteLine("");
+            ui.WriteLine();
 
-            log.Flush();
+            log.Write();
             ui.WriteLine();
 
             ui.SetCorner(map.Width * 2 + 1, 0);
@@ -104,6 +136,9 @@ namespace Donjon {
                 "D: Drop item",
                 "Q: Quit"
             });
+
+            var cell = map.Cell(hero.X, hero.Y);
+            if (cell.Item != null) ui.WriteLine($" You see {cell.Item}");
         }
 
         private Result PlayerAction() {
@@ -174,9 +209,9 @@ namespace Donjon {
         }
 
 
-        private Result TryMove(int dx, int y) {
+        private Result TryMove(int dx, int dy) {
             var targetX = hero.X + dx;
-            var targetY = hero.Y + y;
+            var targetY = hero.Y + dy;
 
             if (map.IsWall(targetX, targetY)) return Result.NoAction();
 
@@ -186,19 +221,48 @@ namespace Donjon {
             hero.X = targetX;
             hero.Y = targetY;
 
-            //return cell.Item == null
-            //    ? Result.Action()
-            //    : Result.Action($"You see: {cell.Item}");
-
             return Result.Action();
         }
 
         private void GameAction() {
-            var aggressive = map.Cells.Select(c => c.Monster).Where(m => m != null && m.IsAggressive);
+            var aggressive = map.Cells.Select(c => c.Monster).Where(m => m != null && m.IsAggressive).ToList();
             foreach (var monster in aggressive) {
-                if (map.AreAdjacent(hero, monster)) log.Add(monster.Fight(hero).Message);
+                if (map.AreAdjacent(hero, monster)) {
+                    log.Add(monster.Fight(hero).Message);
+                } else {
+                    if (map.Distance(hero, monster) < 6) TryMoveTo(monster, hero.X, hero.Y);
+                }
             }
             if (hero.IsDead) playing = false;
+        }
+
+        public bool TryMoveTo(Monster monster, int x, int y) {
+            var dx = x - monster.X;
+            var dy = y - monster.Y;
+            bool moved;
+            if (dx > dy) {
+                moved = TryMove(monster, dx, 0) || TryMove(monster, 0, dy) || TryMove(monster, 0, -dy) || TryMove(monster, -dx, 0);
+            } else {
+                moved = TryMove(monster, 0, dy) || TryMove(monster, dx, 0) || TryMove(monster, -dx, 0) || TryMove(monster, 0, -dy);
+            }
+            return moved;
+        }
+
+        private bool TryMove(Monster monster, int dx, int dy) {
+            dx = Math.Sign(dx);
+            dy = Math.Sign(dy);
+
+            var targetX = monster.X + dx;
+            var targetY = monster.Y + dy;
+
+            if (map.IsWall(targetX, targetY)) return false;
+
+            var cell = map.Cell(targetX, targetY);
+            if (cell.Monster != null) return false;
+
+            map.Cell(monster.X, monster.Y).Monster = null;
+            map.Cell(targetX, targetY).Monster = monster;
+            return true;
         }
     }
 }

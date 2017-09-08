@@ -48,7 +48,6 @@
     <Compile Include="Extensions\GrammarExtensions.cs" />
     <Compile Include="LimitedList.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="Maze.cs" />
     <Compile Include="Randomizer.cs" />
     <Compile Include="Extensions\TupleListExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

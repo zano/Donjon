@@ -48,7 +48,7 @@ namespace OldDonjon {
 
         internal void Populate() {
             foreach (var cell in cells) {
-                if (Randomizer.Chance(10)) {
+                if (Randomizer.Chance(.1)) {
                     switch (Randomizer.Next(3)) {
                         case 0:
                             cell.Monster = new Orc();
@@ -58,7 +58,7 @@ namespace OldDonjon {
                             break;
                     }
                 }
-                if (Randomizer.Chance(20)) {
+                if (Randomizer.Chance(.2)) {
                     switch (Randomizer.Next(7)) {
                         case 0:
                         case 1:

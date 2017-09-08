@@ -9,10 +9,8 @@ namespace Lib {
         private static readonly Random R = new Random();
         private static readonly double K = Sqrt(2 / E);
 
-        public static bool Chance(int chanceForSuccess) => R.Next(100) < chanceForSuccess;
-
-        public static bool ChanceD(double chanceForSuccess)
-            => R.NextDouble() < chanceForSuccess;
+        public static bool Chance(double chanceForSuccess) => R.NextDouble() < chanceForSuccess;
+        public static bool ChanceIn(int chances) => Chance(1d / chances);
 
         public static int Next(int max) => R.Next(max);
         public static int Next(int min, int max) => R.Next(min, max);
@@ -66,7 +64,7 @@ namespace Lib {
 
         public static IEnumerable<T> Permutate<T>(this IList<T> list) {
             list = list.Select(t => t).ToList();
-            for (int size = list.Count; size > 0; size--) {
+            for (var size = list.Count; size > 0; size--) {
                 var index = R.Next(size);
                 var next = list[index];
                 list.RemoveAt(index);
@@ -99,9 +97,21 @@ namespace Lib {
 
         public int Count => distribution.Count;
 
+        public Queue<T> RandomQueue() => new Queue<T>(InRandomOrder().Select(g => g()));
+
+        public IEnumerable<Func<T>> InRandomOrder()
+            => Generators().ToList().Permutate();
+
+        public IEnumerable<Func<T>> Generators() {
+            foreach (var entry in distribution) {
+                ;
+                for (int i = 0; i < entry.Count; i++) yield return entry.Generator;
+            }
+        }
+
         public IEnumerator GetEnumerator() => distribution.GetEnumerator();
 
-        public T Pick() {
+        public T PickRandom() {
             var dice = Randomizer.Dice(Amount);
             return distribution
                 .First(e => (dice -= e.Count) <= 0)
